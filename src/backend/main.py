@@ -29,7 +29,7 @@ from userManager import UserManager
 from flask_helpers import FlaskHelper, flash_print, is_json, is_form, is_static_req, clear_flashes
 from registrationForm import RegistrationForm
 from loginForm import LoginForm
-from forgotPasswordForm import ForgotPwdForm
+from forgotPasswordForm  import ForgotPwdForm
 
 class ChessWeb(UserManager):
     def __init__(self, port: int, is_debug: bool, user: str, pwd: str, db: str, db_host: str):
