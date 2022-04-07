@@ -1,0 +1,12 @@
+[Unit]
+Description=Run the Capstone SpotASpot Server Application
+After=network-online.target
+Requires=network-online.target
+
+[Service]
+EnvironmentFile=/etc/sysconfig/SpotASpot_server_deploy_env
+ExecStart=/bin/bash ${SpotASpot_server_deploy_root_dir}/start.sh --port ${app_port} -db_u "${mysql_access}" -pwd "${mysql_pwd}"
+RestartSec=1min
+
+[Install]
+WantedBy=multi-user.target

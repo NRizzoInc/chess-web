@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="../static/images/chess_pawn.jpeg">
+    <title>{{ title }}</title>
+
+    <link rel="stylesheet" href="../static/css/bulma.min.css" />
+    <link rel="stylesheet" href="../static/css/common.css" />
+
+    <script src="../static/js/extern/jquery-3.5.1.min.js"></script>
+    <script src="../static/js/navbar.js"></script>
+    {% block js_scripts %} {% endblock %}
+    <!--Allow extenders to insert their own js code-->
+    {% block head %}{% endblock %}
+    <!--Allow extenders to insert their own headers-->
+</head>
+
+{% block body %}
+
+<body class="has-navbar-fixed-top has-background-primary">
+    {% endblock %}
+    <div class="hero is-fullheight">
+        <div class="hero-head">
+            <nav class="navbar is-fixed-top has-background-grey-light" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="{{ url_for('index') }}">
+                        <img src="../static/images/chess_pawn.jpeg">
+                    </a>
+
+                    <!-- on mobile or page too small -->
+                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarSetup">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+
+                <!-- left side of navbar-->
+                <div id="navbarSetup" class="navbar-menu">
+                    <div class="navbar-start">
+
+                    </div>
+                    <!-- End of left navbar-->
+
+
+                    <!-- right side of navbar-->
+                    <div class="navbar-end">
+                        {% if not current_user.is_authenticated %}
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a href="{{ url_for('login') }}" class="button is-success">
+                                    <strong>Login</strong>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a href="{{ url_for('signup') }}" class="button is-primary">
+                                    <strong>Sign Up</strong>
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a href="{{ url_for('forgotPassword') }}" class="button is-danger">
+                                    <strong>{{ "Forgot Password" if not current_user.is_authenticated else "Reset Password" }}</strong>
+                                </a>
+                            </div>
+                        </div>
+
+                        {% if current_user.is_authenticated %}
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a href="{{ url_for('logout') }}" class="button is-warning">
+                                    <strong>Logout</strong>
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- close out navbar-->
+            </nav>
+        </div>
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
