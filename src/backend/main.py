@@ -80,20 +80,59 @@ class ChessWeb(UserManager):
 
     def generateRoutes(self):
         """Wrapper for all the url route generation"""
+        self.createHelperRoutes()
         self.createUserPages()
+        self.createInfoRoutes()
 
-    def createUserPages(self):
-        """These are all the GET'able / rendered pages for the user"""
 
+    def createInfoRoutes(self):
+        """All routes for internal passing of information"""
         @self._app.route("/", methods=["GET"])
         @self._app.route("/index", methods=["GET"])
         def index():
             return render_template("index.html")
 
+    def createHelperRoutes(self):
+        @self._app.before_request
+        def log_request():
+            # traditional place to refresh database connection
+            # self.check_conn()
 
+            if is_static_req(request): return None
+            print("Request ({0}): {1} -- {2}".format(
+                request.remote_addr,
+                request,
+                request.form if is_form(request) else ""
+            ))
+            return None
+
+        @self._app.after_request
+        def log_response(response):
+            if is_static_req(request): return response
+
+            res = response.data
+            # check if is binary data
+            try:
+                res = res.decode()
+            except (UnicodeDecodeError, AttributeError):
+                pass
+
+            # if is json, dont print data
+            is_json(res)
+
+            print("Response ({0}) {1}: {2}".format(
+                request.remote_addr,
+                response,
+                # assume all return data is json format
+                res.strip() if is_json(res) else ""
+            ))
+            return response
+
+    def createUserPages(self):
+        """These are all the GET'able / rendered pages for the user"""
         # https://flask-login.readthedocs.io/en/latest/#login-example
-        @self._app.route("/user/login", methods=["GET", "POST"], defaults={'username': None, 'password': None, 'rememberMe': None})
-        def login(username: str, password: str, rememberMe: bool):
+        @self._app.route("/user/login", methods=["GET", "POST"])
+        def login():
             # dont login if already logged in
             if current_user.is_authenticated: return redirect(url_for('index'))
 
@@ -141,7 +180,7 @@ class ChessWeb(UserManager):
 
 
         @self._app.route("/user/signup", methods=["GET", "POST"])
-        def signup(fname:str, lname:str, username:str, password:str, password2: str):
+        def signup():
             if current_user.is_authenticated: return redirect(url_for('index'))
 
             form = RegistrationForm(self._app, user_manager=self)
@@ -170,15 +209,12 @@ class ChessWeb(UserManager):
                 else:
                     return signup_fail(msg="failed to add user to db")
 
-            elif request.method == "POST":
-                print("Signup Validation Failed")
-
             # on GET or failure, reload
             return render_template('signup.html', title="ChessWeb Signup", form=form)
 
 
         @self._app.route("/user/forgot_password", methods=["GET", "POST"])
-        def forgotPassword(uname: str, new_pwd: str):
+        def forgotPassword():
             form = ForgotPwdForm(self._app, user_manager=self)
             update_res = True
 
