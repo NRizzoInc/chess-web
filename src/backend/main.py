@@ -33,12 +33,12 @@ from forgotPasswordForm import ForgotPwdForm
 
 class ChessWeb(UserManager):
     def __init__(self, port: int, is_debug: bool, user: str, pwd: str, db: str, db_host: str):
-        self._app = Flask("Chess Server App")
-        self._app.config["TEMPLATES_AUTO_RELOAD"] = True # refreshes flask if html files change
-        self._app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
+        self.app = Flask("Chess Server App")
+        self.app.config["TEMPLATES_AUTO_RELOAD"] = True # refreshes flask if html files change
+        self.app.config['SECRET_KEY'] = secrets.token_urlsafe(16)
 
-        UserManager.__init__(self, self._app, user, pwd, db, db_host)
-        self.flask_helper = FlaskHelper(self._app, port)
+        UserManager.__init__(self, self.app, user, pwd, db, db_host)
+        self.flask_helper = FlaskHelper(self.app, port)
 
         # get the paths relative to this file
         backend_dir = Path(__file__).parent.resolve()
@@ -46,8 +46,8 @@ class ChessWeb(UserManager):
         frontend_dir = src_dir / 'frontend'
         template_dir = frontend_dir / 'templates'
         static_dir = frontend_dir / "static"
-        self._app.static_folder = str(static_dir)
-        self._app.template_folder = str(template_dir)
+        self.app.static_folder = str(static_dir)
+        self.app.template_folder = str(template_dir)
 
         # logging
         self._logger = logging.getLogger("werkzeug")
@@ -67,13 +67,13 @@ class ChessWeb(UserManager):
 
         # start blocking main web server loop (nothing after this is run)
         if self._is_debug:
-            self._app.run(host=self._host, port=self._port, debug=self._is_debug, threaded=is_threaded)
+            self.app.run(host=self._host, port=self._port, debug=self._is_debug, threaded=is_threaded)
         else:
             # FOR PRODUCTION
             werkzeug.serving.run_simple(
                 hostname=self._host,
                 port=self._port,
-                application=self._app,
+                application=self.app,
                 use_debugger=self._is_debug,
                 threaded=is_threaded
             )
@@ -87,13 +87,13 @@ class ChessWeb(UserManager):
 
     def createInfoRoutes(self):
         """All routes for internal passing of information"""
-        @self._app.route("/", methods=["GET"])
-        @self._app.route("/index", methods=["GET"])
+        @self.app.route("/", methods=["GET"])
+        @self.app.route("/index", methods=["GET"])
         def index():
             return render_template("index.html")
 
     def createHelperRoutes(self):
-        @self._app.before_request
+        @self.app.before_request
         def log_request():
             # traditional place to refresh database connection
             # self.check_conn()
@@ -106,7 +106,7 @@ class ChessWeb(UserManager):
             ))
             return None
 
-        @self._app.after_request
+        @self.app.after_request
         def log_response(response):
             if is_static_req(request): return response
 
@@ -131,12 +131,12 @@ class ChessWeb(UserManager):
     def createUserPages(self):
         """These are all the GET'able / rendered pages for the user"""
         # https://flask-login.readthedocs.io/en/latest/#login-example
-        @self._app.route("/user/login", methods=["GET", "POST"])
+        @self.app.route("/user/login", methods=["GET", "POST"])
         def login():
             # dont login if already logged in
             if current_user.is_authenticated: return redirect(url_for('index'))
 
-            form = LoginForm(self._app, self)
+            form = LoginForm(self.app, self)
 
             def login_fail(msg=""):
                 flash_print(f'Invalid Username or Password!', "is-danger")
@@ -179,11 +179,11 @@ class ChessWeb(UserManager):
 
 
 
-        @self._app.route("/user/signup", methods=["GET", "POST"])
+        @self.app.route("/user/signup", methods=["GET", "POST"])
         def signup():
             if current_user.is_authenticated: return redirect(url_for('index'))
 
-            form = RegistrationForm(self._app, user_manager=self)
+            form = RegistrationForm(self.app, user_manager=self)
 
             def signup_fail(msg=""):
                 flash_print(f'Signup Failed! {msg}', "is-danger")
@@ -213,9 +213,9 @@ class ChessWeb(UserManager):
             return render_template('signup.html', title="ChessWeb Signup", form=form)
 
 
-        @self._app.route("/user/forgot_password", methods=["GET", "POST"])
+        @self.app.route("/user/forgot_password", methods=["GET", "POST"])
         def forgotPassword():
-            form = ForgotPwdForm(self._app, user_manager=self)
+            form = ForgotPwdForm(self.app, user_manager=self)
             update_res = True
 
             if request.method == "POST":
@@ -238,7 +238,7 @@ class ChessWeb(UserManager):
             # on GET or failure, reload
             return render_template("forgot_password.html", title="ChessWeb Reset Password", form=form)
 
-        @self._app.route("/user/logout", methods=["GET", "POST"])
+        @self.app.route("/user/logout", methods=["GET", "POST"])
         @login_required
         def logout():
             logout_user()
