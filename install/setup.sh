@@ -12,7 +12,7 @@ if [[ "${isWindows}" = false ]]; then
 fi
 
 # CLI Flags
-proj_name="chess_web"
+proj_name="web-games"
 print_flags () {
     echo "========================================================================================================================="
     echo "Usage: setup.sh"

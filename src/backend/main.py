@@ -31,7 +31,8 @@ from registrationForm import RegistrationForm
 from loginForm import LoginForm
 from forgotPasswordForm import ForgotPwdForm
 
-class ChessWeb(UserManager):
+class WebGames(UserManager):
+    """Class that handles running of all games"""
     def __init__(self, port: int, is_debug: bool, user: str, pwd: str, db: str, db_host: str):
         self.app = Flask("Chess Server App")
         self.app.config["TEMPLATES_AUTO_RELOAD"] = True # refreshes flask if html files change
@@ -90,7 +91,7 @@ class ChessWeb(UserManager):
         @self.app.route("/", methods=["GET"])
         @self.app.route("/index", methods=["GET"])
         def index():
-            return render_template("index.html")
+            return render_template("index.html", title="Web Games")
 
     def createHelperRoutes(self):
         @self.app.before_request
@@ -147,7 +148,7 @@ class ChessWeb(UserManager):
             password = None
             rememberMe = None
             if request.method == "GET":
-                return render_template("login.html", title="ChessWeb Login", form=form)
+                return render_template("login.html", title="WebGames Login", form=form)
             elif request.method == "POST":
                 # print("Login Form Params: username = {0}, password = {1}, rememberMe={2}".format(
                 #     form.username.data, form.password.data, form.rememberMe.data
@@ -210,7 +211,7 @@ class ChessWeb(UserManager):
                     return signup_fail(msg="failed to add user to db")
 
             # on GET or failure, reload
-            return render_template('signup.html', title="ChessWeb Signup", form=form)
+            return render_template('signup.html', title="WebGames Signup", form=form)
 
 
         @self.app.route("/user/forgot_password", methods=["GET", "POST"])
@@ -236,7 +237,7 @@ class ChessWeb(UserManager):
                 flash("Password Reset Failed", "is-danger")
 
             # on GET or failure, reload
-            return render_template("forgot_password.html", title="ChessWeb Reset Password", form=form)
+            return render_template("forgot_password.html", title="WebGames Reset Password", form=form)
 
         @self.app.route("/user/logout", methods=["GET", "POST"])
         @login_required
@@ -250,7 +251,7 @@ class ChessWeb(UserManager):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser(description="Start up a web app GUI for the ChessWeb DB App")
+    parser = argparse.ArgumentParser(description="Start up a web app GUI for the WebGames DB App")
     parser.add_argument(
         "-p", "--port",
         type=int,
@@ -296,7 +297,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-d", "--db",
         required=False,
-        default="ChessWeb",
+        default="WebGames",
         dest="db",
         help="The name of the database to connect to"
     )
@@ -322,4 +323,4 @@ if __name__ == '__main__':
     #     args["pwd"] = getpass.getpass(pass_msg)
 
     # start app
-    app = ChessWeb(args["port"], args["debugMode"], args["db_user"], args["pwd"], args["db"], args["db_host"])
+    app = WebGames(args["port"], args["debugMode"], args["db_user"], args["pwd"], args["db"], args["db_host"])

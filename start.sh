@@ -2,7 +2,7 @@
 # this script enables user to run the code in this repo using the virtual environment
 
 # Get paths to everything
-virtualEnvironName="chess_web-venv"
+virtualEnvironName="web-games-venv"
 rootDir="$(readlink -fm $0/..)"
 virtualEnvironDir="${rootDir}/${virtualEnvironName}"
 srcPath="${rootDir}/src"
