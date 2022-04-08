@@ -50,15 +50,16 @@ class ChessTable(Table):
         X-Axis: a-h (left -> right)
         Y-Axis: 1-8 (bot -> top)
     """
-    classes = ["table", "is-bordered", "is-striped", "is-hoverable", "is-fullwidth"]
-    col_a = Col("a")
-    col_b = Col("b")
-    col_c = Col("c")
-    col_d = Col("d")
-    col_e = Col("e")
-    col_f = Col("f")
-    col_g = Col("g")
-    col_h = Col("h")
+    classes = ["table", "is-bordered", "is-striped", "is-hoverable", "is-centered"]
+    col_centered = {"column_html_attrs": {"class": "has-text-centered"}}
+    col_a = Col("a", **col_centered)
+    col_b = Col("b", **col_centered)
+    col_c = Col("c", **col_centered)
+    col_d = Col("d", **col_centered)
+    col_e = Col("e", **col_centered)
+    col_f = Col("f", **col_centered)
+    col_g = Col("g", **col_centered)
+    col_h = Col("h", **col_centered)
     border = True
 
 class ChessTableRow(object):
@@ -68,15 +69,14 @@ class ChessTableRow(object):
         Args:
             piece (List[ChessPiece]): List of chess pieces in this row
         """
-        # add pieces in reverse order since rows go 8->1 (top->down)
-        self.col_a = row_pieces[7]
-        self.col_b = row_pieces[6]
-        self.col_c = row_pieces[5]
-        self.col_d = row_pieces[4]
-        self.col_e = row_pieces[3]
-        self.col_f = row_pieces[2]
-        self.col_g = row_pieces[1]
-        self.col_h = row_pieces[0]
+        self.col_a = row_pieces[0]
+        self.col_b = row_pieces[1]
+        self.col_c = row_pieces[2]
+        self.col_d = row_pieces[3]
+        self.col_e = row_pieces[4]
+        self.col_f = row_pieces[5]
+        self.col_g = row_pieces[6]
+        self.col_h = row_pieces[7]
 
 
 b_piece = lambda c_type: ChessPiece(piece=c_type, team=ChessTeam.black)
@@ -93,62 +93,34 @@ def create_chess_table(cells: Optional[List[List[ChessPiece]]]) -> List[ChessTab
             that can be passed to ChessTable's constructor
     """
     if cells is None:
-        flash_print("setting up starting chess board")
-        col_a = [
+        flash_print("setting up starting chess board", style="is-info")
+        row_8 = [
             b_piece(ChessPieceType.rook),
-            b_piece(ChessPieceType.pawn),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            w_piece(ChessPieceType.pawn),
+            b_piece(ChessPieceType.knight),
+            b_piece(ChessPieceType.bishop),
+            b_piece(ChessPieceType.queen),
+            b_piece(ChessPieceType.king),
+            b_piece(ChessPieceType.bishop),
+            b_piece(ChessPieceType.knight),
+            b_piece(ChessPieceType.rook),
+        ]
+        row_7 = [b_piece(ChessPieceType.pawn)]*8
+        row_6 = [empty_piece()]*8
+        row_5 = [empty_piece()]*8
+        row_4 = [empty_piece()]*8
+        row_3 = [empty_piece()]*8
+        row_2 = [w_piece(ChessPieceType.pawn)]*8
+        row_1 = [
+            w_piece(ChessPieceType.rook),
+            w_piece(ChessPieceType.knight),
+            w_piece(ChessPieceType.bishop),
+            w_piece(ChessPieceType.queen),
+            w_piece(ChessPieceType.king),
+            w_piece(ChessPieceType.bishop),
+            w_piece(ChessPieceType.knight),
             w_piece(ChessPieceType.rook),
         ]
-        col_b = [
-            b_piece(ChessPieceType.knight),
-            b_piece(ChessPieceType.pawn),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            w_piece(ChessPieceType.pawn),
-            w_piece(ChessPieceType.knight),
-        ]
-        col_c = [
-            b_piece(ChessPieceType.bishop),
-            b_piece(ChessPieceType.pawn),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            w_piece(ChessPieceType.pawn),
-            w_piece(ChessPieceType.bishop),
-        ]
-        col_d = [
-            b_piece(ChessPieceType.queen),
-            b_piece(ChessPieceType.pawn),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            w_piece(ChessPieceType.pawn),
-            w_piece(ChessPieceType.queen),
-        ]
-        col_e = [
-            b_piece(ChessPieceType.knight),
-            b_piece(ChessPieceType.pawn),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            empty_piece(),
-            w_piece(ChessPieceType.pawn),
-            w_piece(ChessPieceType.knight),
-        ]
-        # symmetrical now
-        col_f = deepcopy(col_c)
-        col_g = deepcopy(col_b)
-        col_h = deepcopy(col_a)
-        cells = [col_a, col_b, col_c, col_d, col_e, col_f, col_g, col_h]
+        cells = [row_8, row_7, row_6, row_5, row_4, row_3, row_2, row_1]
 
     chess_table = [ChessTableRow(row) for row in cells]
     return chess_table
