@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+<head>
+    {% block favicon %}
+        <link rel="icon" href="/static/images/chess_pawn.jpeg">
+    {% endblock %}
+
+    {% block head %}
+    {% endblock %}
+
+    {% block js_scripts %}
+        <script src="/static/js/chess.js"></script>
+    {% endblock %}
+
+</head>
+
+<body>
+    {% block content %}
+        {{ chess_table }}
+    {% endblock %}
+</body>

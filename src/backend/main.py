@@ -30,6 +30,7 @@ from flask_helpers import FlaskHelper, flash_print, is_json, is_form, is_static_
 from registrationForm import RegistrationForm
 from loginForm import LoginForm
 from forgotPasswordForm import ForgotPwdForm
+from chess import ChessWeb
 
 class WebGames(UserManager):
     """Class that handles running of all games"""
@@ -59,8 +60,9 @@ class WebGames(UserManager):
         logLevel = logging.INFO if self._is_debug == True else logging.ERROR
         self._logger.setLevel(logLevel)
 
-        # create routes (and print routes)
+        # create routes (and print them)
         self.generateRoutes()
+        self.chess = ChessWeb(self.app)
         self.flask_helper.print_routes()
 
 

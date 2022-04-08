@@ -4,18 +4,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="../static/images/chess_pawn.jpeg">
     <title>{{ title }}</title>
 
-    <link rel="stylesheet" href="../static/css/bulma.min.css" />
-    <link rel="stylesheet" href="../static/css/common.css" />
+    {% block favicon %}
+        <link rel="icon" href="/static/images/game_favicon.png">
+    {% endblock %}
 
-    <script src="../static/js/extern/jquery-3.5.1.min.js"></script>
-    <script src="../static/js/navbar.js"></script>
-    {% block js_scripts %} {% endblock %}
-    <!--Allow extenders to insert their own js code-->
     {% block head %}{% endblock %}
-    <!--Allow extenders to insert their own headers-->
+
+    <link rel="stylesheet" href="/static/css/bulma.min.css" />
+    <link rel="stylesheet" href="/static/css/common.css" />
+
+    <script src="/static/js/extern/jquery-3.5.1.min.js"></script>
+    <script src="/static/js/navbar.js"></script>
+    {% block js_scripts %}{% endblock %}
 </head>
 
 {% block body %}
@@ -27,7 +29,7 @@
             <nav class="navbar is-fixed-top has-background-grey-light" role="navigation" aria-label="main navigation">
                 <div class="navbar-brand">
                     <a class="navbar-item" href="{{ url_for('index') }}">
-                        <img src="../static/images/chess_pawn.jpeg">
+                        <img src="/static/images/game_favicon.png">
                     </a>
 
                     <!-- on mobile or page too small -->
@@ -41,7 +43,13 @@
                 <!-- left side of navbar-->
                 <div id="navbarSetup" class="navbar-menu">
                     <div class="navbar-start">
-
+                        <div class="navbar-item">
+                            <div class="buttons">
+                                <a href="{{ url_for('chess') }}" class="button is-success">
+                                    <strong>Chess</strong>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                     <!-- End of left navbar-->
 
